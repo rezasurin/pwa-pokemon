@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_ALL_POKEMONS = gql`
   query AllPokemons {
-    pokemons(limit: 10, offset: 20) {
+    pokemons(limit: 20, offset: 20) {
       results {
         name
         image
@@ -32,6 +32,15 @@ query GetPokemonDetail ($inputName: String!) {
       move {
         name
       }
+    }
+    types {
+      type {
+        name
+      }
+    }
+    sprites {
+      front_default
+      back_default
     }
   }
 }

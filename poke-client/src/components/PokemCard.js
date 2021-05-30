@@ -6,14 +6,17 @@ import { jsx, css } from '@emotion/react'
 import styled from '@emotion/styled'
 import Color from 'color'
 import { 
-  CardMedia, IconButton, Card, CardActions, CardActionArea
+  CardMedia, IconButton, Card, CardActions, CardActionArea, CardContent,
+  Typography,
+  CircularProgress
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { Link } from 'react-router-dom'
 
 const ImgContainer = styled.img(props => ({
-  height: '38vh',
-  width: '312px'
+  height: '28vh',
+  width: '208px',
+  left: 10,
 }))
 
 const useStyles = makeStyles((theme) => ({
@@ -24,8 +27,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardCustom: {
-    width: "240px",
-    height: "240px",
+    width: "220px",
+    height: "260px",
     borderRadius: 16,
     '&:hover': {
       boxShadow: `0 6px 12px 0 ${Color()
@@ -33,18 +36,15 @@ const useStyles = makeStyles((theme) => ({
         .darken(0.2)
         .fade(0.5)}`,
     }
-  },
-  iconButtonStyle: {
-    positon: "absolute",
-    top: 0,
-    left: 0,
-    width: 25,
-    height: "50%"
   }
 }))
 
-export default function PokemCard () {
+export default function PokemCard ({ pokemon, loading }) {
   const classes = useStyles()
+  // console.log(pokemon)
+  const handleClickCard = (name) => {
+    console.log(name)
+  }
 
   return (
     <Card
@@ -52,18 +52,25 @@ export default function PokemCard () {
       raised
       elevation={4}
       >
-        <h1 class="shadow-md text-xl font-thin text-center text-gray-600 uppercase p-1">Bubasaurus</h1>
-        <CardActionArea >
-            <CardMedia elevation={6}>
-              <div>
-                  <ImgContainer
-                  style={{position: "relative"}}
-                  src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
-                  cover={{ width: 300, height: 200, mode: 'horizontal_center' }}
-                  />
-              </div>
-            </CardMedia>
-        </CardActionArea>
+        <h1 class="shadow-md text-xl font-thin text-center text-gray-600 uppercase p-1">{pokemon.name}</h1>
+        <Link to={`/detail/${pokemon.name}`}>
+          <CardActionArea onClick={() => handleClickCard(pokemon.name)}>
+              <CardMedia elevation={6}>
+                <div>
+                  {
+                    loading ? <CircularProgress /> :
+                    <ImgContainer
+                    style={{position: "relative"}}
+                    src={pokemon.image}
+                    />
+                  }
+                </div>
+              </CardMedia>
+              <CardContent>
+                <Typography variant="body2" >Owned: </Typography>
+              </CardContent>
+          </CardActionArea>
+        </Link>
       </Card>
   )
 }
