@@ -1,7 +1,7 @@
-import logo from './logo.svg';
 import './App.css';
 import Home from './pages/Home'
 import PokemonDetail from './pages/PokemonDetail'
+import MyPokemonStorage from './pages/MyPokemon'
 import NavBar from './components/NavBar'
 import { ApolloProvider } from '@apollo/client/react'
 import client from './config/graphql'
@@ -22,7 +22,7 @@ function App() {
               <PokemonDetail />
             </Route>
             <Route path="/MyPokemonLists">
-              <Home />
+              <MyPokemonStorage />
             </Route>
             <Route exact path="/">
               <Home />

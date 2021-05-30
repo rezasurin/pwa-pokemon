@@ -7,20 +7,19 @@ import { Link } from 'react-router-dom'
 
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import { MenuIcon, XIcon } from '@heroicons/react/outline'
 
-const navigation = ['All Pokemons', 'My Pokemon Lists']
-const profile = ['My Profile']
+
+// const navigation = ['All Pokemons', 'My Pokemon Lists']
+const navigation = [
+  {name: 'All Pokemons', href: '/', current: true},
+  {name: 'My Pokemon Lists', href: '/', current: false}
+]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-
-const Navbar = styled.nav((props) => ({
-  backgroundColor: 'blue',
-  height: '60px'
-}))
 
 export default function NavBar () {
   return (
@@ -33,8 +32,8 @@ export default function NavBar () {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <img
-                      className="h-8 w-8"
-                      src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+                      className="h-8"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/1280px-International_Pok%C3%A9mon_logo.svg.png"
                       alt="Workflow"
                     />
                   </div>
@@ -42,19 +41,26 @@ export default function NavBar () {
                     <div className="ml-10 flex items-baseline space-x-4">
                       {navigation.map((item, itemIdx) =>
                         itemIdx === 0 ? (
-                          <Fragment key={item}>
+                          <Fragment key={itemIdx}>
                             {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                            <Link to={item === 'All Pokemons' ? `/` : `/MyPokemonLists`} href="#" className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">
-                              {item}
+                            <Link to={item.name === 'All Pokemons' ? `/` : `/MyPokemonLists`}
+                            aria-current={item.current ? 'page' : undefined}
+                            className={classNames(
+                              item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium', item.current = false
+                            )}
+                            >
+                              {item.name}
                             </Link>
                           </Fragment>
                         ) : (
                           <Link
-                            key={item}
-                            to={item === 'All Pokemons' ? `/` : `/MyPokemonLists`}
+                            key={itemIdx}
+                            aria-current={item.current ? 'page' : undefined}
+                            to={item.name === 'All Pokemons' ? `/` : `/MyPokemonLists`}
                             className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                           >
-                            {item}
+                            {item.name}
                           </Link>
                         )
                       )}
@@ -80,20 +86,27 @@ export default function NavBar () {
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 {navigation.map((item, itemIdx) =>
                   itemIdx === 0 ? (
-                    <Fragment key={item}>
+                    <Fragment key={itemIdx}>
                       {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
-                      <a href="#" className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium">
-                        {item}
-                      </a>
+                      <Link to={item.name === 'All Pokemons' ? `/` : `/MyPokemonLists`}
+                      aria-current={item.current ? 'page' : undefined}
+                      className={classNames(
+                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                        'px-3 py-2 rounded-md text-sm font-medium', item.current = false
+                      )}
+                      >
+                        {item.name}
+                      </Link>
                     </Fragment>
                   ) : (
-                    <a
-                      key={item}
-                      href="#"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                    <Link
+                      key={itemIdx}
+                      aria-current={item.current ? 'page' : undefined}
+                      to={item.name === 'All Pokemons' ? `/` : `/MyPokemonLists`}
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                     >
-                      {item}
-                    </a>
+                      {item.name}
+                    </Link>
                   )
                 )}
               </div>

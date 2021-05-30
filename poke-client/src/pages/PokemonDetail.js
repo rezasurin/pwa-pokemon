@@ -3,11 +3,12 @@
 import React, {useState, useEffect} from 'react'
 import { jsx, css, keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import {gql, useQuery} from '@apollo/client'
+import {useQuery} from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { GET_POKEMON_DETAIL } from '../queries/index'
-import { Typography, Button} from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import PokemonType from '../components/TypeChip'
+import ModalGotPoke from '../components/ModalGetPoke'
 
 const ImgContainer = styled.img(props => ({
   height: '52vh',
@@ -20,7 +21,7 @@ const SectionDetail = styled.div(props => ({
   alignItems: 'center',
   flexWrap: 'wrap',
   flexDirection: 'column',
-  padding: '10px'
+  padding: '10px',
 }))
 const SectionDesc = styled.div(props => ({
   display: 'flex',
@@ -76,29 +77,41 @@ const ImageActionArea = styled.button`
 `
 export default function PokemonDetail () {
   const { name } = useParams()
-  const {data, loading, error} = useQuery(GET_POKEMON_DETAIL, { variables: {inputName: name}})
+  const {data} = useQuery(GET_POKEMON_DETAIL, { variables: {inputName: name}})
   const [onCatch, setOnCatch] = useState(false)
+  const [modalGotPoke, setModalGotPoke] = useState(false)
+  const [isGotPokemon, setIsGotPokemon] = useState(false)
   
   const catching = () => {
     setOnCatch(true)
     setTimeout(() => {
       const gatcha = Math.round(Math.random())
-      console.log(gatcha)
+      
       if (gatcha === 1) {
-        console.log("you've got pokemon!")
-      } else {
-        console.log("missed!")
+        
+        setIsGotPokemon(!isGotPokemon)
       }
       setOnCatch(false)
     }, 2000)
+    setModalGotPoke(true)
   }
+
   if (onCatch) {
     return (
-      <SectionDetail className="bg-gradient-to-r md:grid-cols-1 lg:h-screen md:h-full sm:h-full from-green-400 to-green-500">
+      <main
+    css={css`
+    background-color: #1F2937;
+    `}
+    >
+      <div className="md:container max-w-7xl mx-auto sm:px-4 lg:px-2 md:px-1"
+      >
+      <SectionDetail className="bg-gradient-to-r md:grid-cols-1 lg:h-screen md:h-screen sm:h-screen from-green-400 to-green-500">
         <p>
           Loading...
         </p>
       </SectionDetail>
+      </div>
+    </main>
     )
   }
 
@@ -108,12 +121,21 @@ export default function PokemonDetail () {
     background-color: #1F2937;
     `}
     >
-      <div className="md:container max-w-7xl mx-auto sm:px-4 lg:px-2"
+      <div className="md:container max-w-7xl mx-auto sm:px-4 lg:px-2 md:px-1"
       >
-        <SectionDetail className="bg-gradient-to-r gap-4 grid grid-cols-2 md:grid-cols-1 lg:h-screen md:h-full sm:h-full from-green-400 to-green-500"
-        >
-            <ImageActionArea onClick={() => catching()}>
-              <ImageCard>
+        <SectionDetail
+        className="bg-gradient-to-r gap-4 grid grid-cols-2 md:grid-cols-1 lg:h-screen md:h-full sm:h-full from-green-400 to-green-500">
+            <ImageActionArea onClick={() => catching()}
+            >
+              <ImageCard
+              css={
+                css`
+                @media (min-width: 320px, max-width: 576px) {
+                  width: 14rem;
+                }
+                `
+              }
+              >
                 <Typography variant="h5" style={{position: 'relative'}}
                 css={
                   css`
@@ -125,6 +147,12 @@ export default function PokemonDetail () {
                 <ImgContainer 
                 style={{position: "relative"}}
                 src={data?.pokemon.sprites.front_default}
+                css={css`
+                @media (min-width: 320px, max-width: 576px) {
+                  height: 32vh;
+                  width: 32vh;
+                }
+                `}
                 />
                 <SectionDesc >
                   <Typography variant="h5">Types</Typography>
@@ -140,10 +168,15 @@ export default function PokemonDetail () {
             </ImageActionArea>
             <div css={css`
               display: flex;
-              width: 680px;
-              height: 420px;
+              @media (min-width: 768px) {
+                width: 680px;
+                height: 420px;
+              }
               flex-direction: column;
               background-color: white;
+              @media (min-width: 320px, max-width: 576px) {
+                width: 320px;
+              }
               `}>
               <div css={css`
               `}>
@@ -179,8 +212,8 @@ export default function PokemonDetail () {
                 </div>
                 <div class="text-black flex flex-wrap px-2 justify-center">
                   {
-                    data?.pokemon.abilities.map(item => (
-                      <div class="m-1 px-3 py-1 bg-gray-300 rounded-lg text-gray-800 ">{item.ability.name}</div>
+                    data?.pokemon.abilities.map((item, idx) => (
+                      <div key={idx} class="m-1 px-3 py-1 bg-gray-300 rounded-lg text-gray-800 ">{item.ability.name}</div>
                     ))
                   }
                 </div>
@@ -191,14 +224,17 @@ export default function PokemonDetail () {
               <SectionDesc style={{paddingLeft: '10px', overflow: 'scroll'}} className="flex flex-col col-span-2 ">
                 <div className="my-1/2 flex flex-wrap px-1 py-2 justify-center">
                   {
-                    data?.pokemon.moves.map(item => (
-                      <div class="px-2 py-1 bg-gray-200 m-2 rounded-lg text-gray-600">{item.move.name}</div>
+                    data?.pokemon.moves.map((item, idx) => (
+                      <div key={idx} class="px-2 py-1 bg-gray-200 m-2 rounded-lg text-gray-600">{item.move.name}</div>
                     ))
                   }
                 </div>
               </SectionDesc>
             </div>
           </SectionDetail>
+        <ModalGotPoke openModal={modalGotPoke} closeModal={setModalGotPoke} 
+        isGotPokemon={isGotPokemon} pokemon={data?.pokemon}
+        />
       </div>
     </main>
   )

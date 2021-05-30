@@ -1,40 +1,23 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
-
+import React, {useState, useEffect} from 'react'
 import { jsx, css } from '@emotion/react'
-import styled from '@emotion/styled'
-import {gql, useQuery} from '@apollo/client'
-import { GET_ALL_POKEMONS } from '../queries/index'
+import { useQuery} from '@apollo/client'
+import { GET_ALL_POKEMONS, GET_MY_POKEMONS } from '../queries/index'
 import PokeCard from '../components/PokemCard'
 import { CircularProgress} from '@material-ui/core'
 
-const BigContainer = styled.div(props => ({
-  display: 'flex',
-  paddingHorizontal: 20,
-  backgroundColor: 'black',
-}))
-const Card = styled.div(props => ({
-  display: 'flex',
-  flexWrap: 'wrap',
-  width: '200px',
-  borderRadius: 2,
-}))
 
-const cardGrid = css`
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  grid-column-gap: var(--spacing-l);
-  grid-row-gap: var(--spacing-l);
-  max-width: var(--width-container);
-  width: 100%;
-`;
-const breakpoints = [576, 768, 992, 1200]
-// const mq = breakpoints.map(
-//   bp => `@media(min-width, ${bp}px)`
-// )
 export default function Home() {
   const {data, loading, error} = useQuery(GET_ALL_POKEMONS)
-  console.log(data?.pokemons.results)
+  const {data: myPokemonsData } = useQuery(GET_MY_POKEMONS)
+  const [pokemons, setPokemons] = useState([])
+  
+  useEffect(() => {
+    if (!loading) {
+      setPokemons([data?.pokemons.results, ...pokemons])
+    }
+  }, [loading])
 
   return (
     <main css={css`
@@ -43,6 +26,9 @@ export default function Home() {
     >
       <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 md:container max-w-7xl mx-auto sm:px-4 lg:px-2"
       >
+        <div>
+          <h1>TOTAL OWNED POKEMON: {myPokemonsData.myPokemons.length}</h1>
+        </div>
         {
           loading ?
           <div className="bg-gradient-to-r from-yellow-400 to-yellow-500" css={
@@ -60,9 +46,8 @@ export default function Home() {
           :
         <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:gap-cols-2 md:gap-3 lg:gap-3 gap-y-8 py-8 auto-cols-auto justify-items-center">
           {
-            data?.pokemons.results.map(pokemon => (
-              <PokeCard pokemon={pokemon} loading={loading}/>
-              
+            data?.pokemons.results.map((pokemon) => (
+              <PokeCard key={pokemon.id} pokemon={pokemon} myPokemon={myPokemonsData?.myPokemons} loading={loading}/>
             ))
           }
         </div>
