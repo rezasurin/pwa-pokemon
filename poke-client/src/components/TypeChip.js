@@ -2,7 +2,7 @@
 /** @jsx jsx */
 
 import React, {useEffect,useState} from 'react'
-import { jsx, css } from '@emotion/react'
+import { jsx } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Typography } from '@material-ui/core'
 

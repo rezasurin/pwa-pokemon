@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_ALL_POKEMONS = gql`
   query AllPokemons {
-    pokemons(limit: 20, offset: 20) {
+    pokemons(limit: 50, offset: 20) {
       results {
         name
         image
@@ -44,4 +44,17 @@ query GetPokemonDetail ($inputName: String!) {
     }
   }
 }
+`;
+
+export const GET_MY_POKEMONS = gql`
+  query {
+    myPokemons @client {
+      nickname
+      name
+      image
+      types
+      abilities
+      moves
+    }
+  }
 `;
